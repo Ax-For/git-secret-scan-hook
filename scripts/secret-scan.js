@@ -103,9 +103,17 @@ function looksPlaceholder(value) {
   return false;
 }
 
+function looksCodeExpression(value) {
+  if (!value) return false;
+  if (/[(){}[\]?;,]/.test(value)) return true;
+  if (/^(?:[A-Za-z_$][A-Za-z0-9_$]*\.)+[A-Za-z_$][A-Za-z0-9_$]*$/.test(value)) return true;
+  return false;
+}
+
 function looksGenericSecretValue(value) {
   if (!value || value.length < 16) return false;
   if (looksPlaceholder(value)) return false;
+  if (looksCodeExpression(value)) return false;
   if (/^[a-f0-9]{32,64}$/i.test(value)) return false;
   if (/^[A-F0-9]{32,64}$/.test(value)) return false;
 
@@ -314,6 +322,7 @@ module.exports = {
   hasAllowMarker,
   isGeneratedFile,
   looksGenericSecretValue,
+  looksCodeExpression,
   parsePushRefs,
   scanCommits,
   shannonEntropy,

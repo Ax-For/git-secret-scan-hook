@@ -101,3 +101,19 @@ test("findSensitiveMatches honors inline allow markers and generated-file heuris
   assert.deepEqual(allowlisted, []);
   assert.deepEqual(generated, []);
 });
+
+test("findSensitiveMatches ignores token metrics and expression assignments", () => {
+  const findings = [
+    findSensitiveMatches("totalTokens: Number(session.aggregateToken?.total) || 0,", {
+      filePath: "src/app.jsx",
+    }),
+    findSensitiveMatches("const tokenInput = Number(summary?.totals?.input) || 0;", {
+      filePath: "src/components/stream-workspace.jsx",
+    }),
+    findSensitiveMatches("const token = event?.tokenUsage;", {
+      filePath: "src/lib/workspace-models.js",
+    }),
+  ];
+
+  assert.deepEqual(findings, [[], [], []]);
+});
